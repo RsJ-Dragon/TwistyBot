@@ -10,7 +10,7 @@ class Wordpress_Cache extends EventEmitter
 		// api password
 		this.password = password;
 		// Time of most recent post
-		this.last_update = '1970-01-01 00:00:00';
+		this.last_update = '2016-08-20 05:51:54';
 		// Post cache, key = post id, value = post object
 		this.posts = {};
 
