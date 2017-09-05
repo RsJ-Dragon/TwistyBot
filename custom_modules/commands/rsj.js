@@ -30,22 +30,22 @@ module.exports.command = async function(message, params) {
 	// Which posts do we care about?
 	var post_types = ['publish'];
 	if (message.check_permissions([
-			{ channel: ['309255385750175747', '230201497302859776', '301246003703447553', '289640885421998081'] }, 
+			{ channel: ['309255385750175747', '230201497302859776', '301246003703447553', '289640885421998081'] },
 			// RS JUSTICE.name-checks, RS JUSTICE.private, RS JUSTICE.moderation, RS JUSTICE.command-testing
-			
-		        { channel: ['306975831324884992', '309599287174627329', '273621931297603585', '309748732088418304'] }, 
-		
+
+		        { channel: ['306975831324884992', '309599287174627329', '273621931297603585', '309748732088418304'] },
+
 		        // Specific clan guild channels:
-			
+
 			// Nomad's Redemption: ...4992
 			// World of Bossing: ...7329
 			// PvM's Finest: ...3585
 			// Veqkin 07: ...8304
-			// 
-			// 
-			// 
-		
-			
+			//
+			//
+			//
+
+
 			{ user: ['217934790886686730', '189803024611278849', '99213910405578752'] }, // Zeal, Twisty Fork, Alpha Dragon
 		]))
 	{
@@ -54,6 +54,10 @@ module.exports.command = async function(message, params) {
 
 	// Lookup every player
 	var players = await Promise.all(params.map( p => apis.RSJustice.find(p, post_types) ));
+
+	players.forEach(function(player, idx) {
+		player.searched_name = params[idx];
+	});
 
 	if (players.length == 1)
 	{ // Single player lookup, we can afford to be fancy

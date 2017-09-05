@@ -10,35 +10,63 @@ class Wordpress_Cache extends EventEmitter
 		// api password
 		this.password = password;
 		// Time of most recent post
-		this.last_update = '2016-08-20 05:51:54';
+		this.last_update = '1970-01-01 00:00:00';
 		// Post cache, key = post id, value = post object
 		this.posts = {};
 
 		// cache_promise resovles when we first get data
-		this.cache_promise = this.download_posts(999)
-			.then(posts => {
-				// Save posts into cache
-				posts.forEach(p => this.posts[p.id] = p);
-				// Continue to update cache every 5 minutes
-				setInterval(this.check_posts.bind(this), 300000);
-			});
+		this.cache_promise = this.initialize_cache();
 	}
 
-	async download_posts(attempts)
+	async initialize_cache()
+	{
+		let query = {
+			order: 'ASC',
+			orderby: 'ID',
+			page: 1,
+			posts_per_page: 500
+		};
+
+		let again = true;
+		while(again)
+		{
+			let posts = await this.download_posts(250, query, 1000);
+			posts.forEach(post => {
+				this.posts[post.id] = post;
+			});
+
+			// Try next page if there were 500 posts on this page
+			again = (posts.length == 500);
+			query.page += 1;
+		}
+
+		// All posts have been loaded, start a timer to update the cache every 5 minutes
+		setInterval(this.check_posts.bind(this), 300000);
+	}
+
+	async download_posts(attempts, query, delay)
 	{
 		// Build url to request posts since last update
-		var url = this.endpoint + '?password=' + this.password + '&after=' + encodeURIComponent(this.last_update);
+		let req_options = {
+			url: this.endpoint,
+			qs: query || {}
+		};
+		req_options.qs.password = this.password;
+
+		console.log(req_options);
+
+		delay = delay || 8000;
 		try
 		{
-			var res = await util.queue_request(url, {
+			var res = await util.queue_request(req_options, {
 				max_attempts: attempts,
-				success_delay: 8000,
-				failure_delay: 8000,
+				success_delay: delay,
+				failure_delay: delay,
 			});
 
 			var wp_posts = JSON.parse(res.body);
 
-			console.log(url + ` => [${wp_posts.length}]`);
+			console.log(res.request.url.href, ` => [${wp_posts.length}]`);
 
 			if (wp_posts.length > 0)
 			{ // Next request, get posts after the most recent post we know about
@@ -65,7 +93,7 @@ class Wordpress_Cache extends EventEmitter
 			});
 		} catch(e) {
 			// Probably request error
-			console.warn('Error downloading wordpress posts! ' + e.message + ' \nfrom ' + url);
+			console.warn('Error downloading wordpress posts! ' + e.message + ' from ' + res.request.url.href);
 			// Return empty array to be safe, but don't update time
 			return [];
 		}
@@ -73,7 +101,7 @@ class Wordpress_Cache extends EventEmitter
 
 	async check_posts()
 	{
-		var posts = await this.download_posts(1);
+		var posts = await this.download_posts(1, { after: this.last_update });
 		posts.forEach(post => {
 			// Save old version
 			var old_post = this.posts[post.id];
