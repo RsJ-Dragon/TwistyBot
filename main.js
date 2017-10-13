@@ -3,7 +3,7 @@ require('./globals.js');
 
 Discord.bot.on('ready', function() {
 	console.log('Event: ready');
-	Discord.bot.user.setPresence({ game: { name: 'RSJUSTICE.COM' } });
+	Discord.bot.user.setPresence({ game: { name: 'RSJUSTICE.COM', type: 0 } });
 });
 Discord.bot.on('disconnect', () => console.warn('Event: disconnected'));
 Discord.bot.on('guildMemberAdd', member => console.log('[New member]', member.guild.name + ':', member.user.username));

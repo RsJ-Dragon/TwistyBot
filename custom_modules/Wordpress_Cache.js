@@ -1,4 +1,5 @@
 const EventEmitter = require('events');
+let entities = require('entities');
 
 class Wordpress_Cache extends EventEmitter
 {
@@ -68,6 +69,7 @@ class Wordpress_Cache extends EventEmitter
 
 			console.log(res.request.url.href, ` => [${wp_posts.length}]`);
 
+			// TODO: Pick the actual most recent post
 			if (wp_posts.length > 0)
 			{ // Next request, get posts after the most recent post we know about
 				this.last_update = wp_posts[0].modified;
@@ -76,11 +78,21 @@ class Wordpress_Cache extends EventEmitter
 			// Convert wp_post to something useful
 			return wp_posts.map(post => {
 				var search_name = to_searchable_title(post.title);
+
+				if (post.custom)
+				{
+					// Decode entities in custom attributes
+					for(let k in post.custom)
+					{
+						post.custom[k] = post.custom[k].map(html => entities.decodeHTML(html));
+					}
+				}
+
 				return {
 					id: post.id,
 					url: this.endpoint.replace(/wp-json.+/, post.link),
-					player: post.title,
-					reason: post.reason.replace(/&amp;/g, '&'),
+					player: entities.decodeHTML(post.title),
+					reason: entities.decodeHTML(post.reason),
 					date_created: new Date(post.date + 'Z'),
 					date_modified: new Date(post.modified + 'Z'),
 					status: post.status,

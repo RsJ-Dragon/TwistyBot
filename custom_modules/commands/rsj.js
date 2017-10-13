@@ -106,7 +106,13 @@ function get_embed(details, message)
 	// Dates
 	case_details = '';
 	if (details.custom.date)
-		case_details += '• Date of abuse - ' + moment(details.custom.date[0], 'YYYY/MM/DD').format(dateformat) + '\n';
+	{
+		let actual_date = moment(details.custom.date[0], 'YYYY/MM/DD');
+		if (actual_date.isValid())
+			case_details += '• Date of abuse - ' + actual_date.format(dateformat) + ' (' + util.approximate_time(actual_date.toDate(), new Date()) + ' ago)\n';
+		else
+			case_details += '• Date of abuse - ' + details.custom.date[0] + '\n';
+	}
 	case_details += '• Date published - ' + moment(details.date_created).format(dateformat) + ' (' + util.approximate_time(details.date_created, new Date()) + ' ago)\n';
 	case_details += '• Last updated - ' + moment(details.date_modified).format(dateformat) + ' (' + util.approximate_time(details.date_modified, new Date()) + ' ago)';
 
@@ -135,6 +141,9 @@ function send_response_to_zeal(response, message, params)
 {
 	var sender = '[' + message.channel.get_name() + '] ' + message.author.username + ': !rsj ' + params.join(',') + '\n';
 	var Zeal_dm = Discord.bot.get_text_channel('RS JUSTICE.global-usage');
+	if (!Zeal_dm)
+		return response;
+
 	// var Zeal_dm = Discord.bot.get_text_channel('twisty-test.dev_admin');
 	if (Array.isArray(response))
 	{
