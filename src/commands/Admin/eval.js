@@ -18,7 +18,8 @@ module.exports.run = async function(Discord, client, params, options) {
 	if (!sandbox)
 	{
 		sandbox = {
-			require: src_require,
+			require: require,
+			src_require: src_require,
 			globals: global,
 			Discord: Discord,
 			client: client,
