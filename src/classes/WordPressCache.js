@@ -5,7 +5,7 @@ let RateLimiter = src_require('classes/RateLimiter');
 
 function searchable(name)
 {
-	return name.replace(/-_\xa0/g, ' ').toLowerCase();
+	return name.replace(/[-_\xa0]/g, ' ').toLowerCase();
 }
 
 class WordPressCache extends EventEmitter
