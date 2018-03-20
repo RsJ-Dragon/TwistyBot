@@ -73,7 +73,7 @@ class RuneWatch extends WordPressCache
 				};
 
 				// Save posts and emit events
-				self.save_posts(options, true).catch(e => console.warn('RSJ update error', e));
+				self.save_posts(options).catch(e => console.warn('RSJ update error', e));
 			}, 300000);
 	}
 }
