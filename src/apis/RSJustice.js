@@ -83,7 +83,7 @@ class RSJustice extends WordPressCache
 					}
 				};
 
-				self.save_posts(options).catch(e => console.warn('RSJ update error', e));
+				self.save_posts(options, true).catch(e => console.warn('RSJ update error', e));
 			}, 300000);
 	}
 }

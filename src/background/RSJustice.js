@@ -70,7 +70,7 @@ module.exports = async function(client) {
 	// Listen for post events
 	RSJustice.on('new_pending', function(new_post)
 	{
-		private_feed.queue('New post (pending): ' + new_post.player, new_post.reason);
+		private_feed.queue('New post (pending): ' + new_post.player, new_post.reason || '[No reason provided]');
 	});
 	RSJustice.on('new_private', function(new_post)
 	{
