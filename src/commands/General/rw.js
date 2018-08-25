@@ -37,17 +37,9 @@ const private_channels = [
 
 const leaving_soon =
 	'RSJustice and RuneWatch are merging, as a result RsJ-Bot will be shutting down permanently. ' +
-	'TwistyBot will continue to provide the !rsj/rw commands. TwistyBot can be invited to your server using the following link:\n' +
-	Discord.link('https://discordapp.com/oauth2/authorize?client_id=228019028755611648&permissions=0&scope=bot') +
-	'\nJoin the RuneWatch Discord for more information: https://discordapp.com/invite/YcW6wq ';
-
-const leaving_soon_have_twistybot =
-	'RSJustice and RuneWatch are merging, as a result RsJ-Bot will be shutting down permanently. ' +
-	'TwistyBot will continue to provide the !rsj/rw commands.' +
-	'\nJoin the RuneWatch Discord for more information: https://discordapp.com/invite/YcW6wq ';
+	'TwistyBot will continue to provide the !rsj/rw commands. Use the !invite command for the links to TwistyBot and RuneWatch discord.';
 
 module.exports.run = async function(Discord, client, params, options) {
-	let message = options.message.guild && options.message.guild.members.has('228019028755611648') ? leaving_soon_have_twistybot : leaving_soon;
 
 	// Which posts do we care about?
 	let rw_statuses = ['publish'];
@@ -74,7 +66,7 @@ module.exports.run = async function(Discord, client, params, options) {
 		// Combine results and sort by score
 		let posts = rw_posts.concat(rsj_posts).sort( (a, b) => a.score - b.score );
 		if (posts.length == 0)
-			return 'Player not found!\n' + message;
+			return 'Player not found!\n' + leaving_soon;
 		
 		let exact_matches = posts.filter(post => post.score == 0);
 		let close_matches = posts.filter(post => post.score > 0);
@@ -91,13 +83,13 @@ module.exports.run = async function(Discord, client, params, options) {
 			// Tricky, multiple embeds could be returned here
 			let response = embed_response(exact_matches, close_matches, options);
 			if (response.length > 1)
-				response.unshift(message);
+				response.unshift(leaving_soon);
 			else
-				response = { content: message, options: response[0] };
+				response = { content: leaving_soon, options: response[0] };
 			return response;
 		}
 		else
-			return text_response(exact_matches, close_matches) + '\n' + message;
+			return text_response(exact_matches, close_matches) + '\n' + leaving_soon;
 	}
 	else
 	{
@@ -117,7 +109,7 @@ module.exports.run = async function(Discord, client, params, options) {
 			});
 		}
 
-		return (response || 'No matching cases found!') + '\n' + message;
+		return (response || 'No matching cases found!') + '\n' + leaving_soon;
 	}
 };
 
