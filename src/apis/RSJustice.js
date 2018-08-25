@@ -14,12 +14,14 @@
 
 let WordPressCache = src_require('classes/WordPressCache');
 let entities = require('entities');
+let RateLimiter = src_require('classes/RateLimiter');
 
 class RSJustice extends WordPressCache
 {
 	constructor(config)
 	{
 		super(config);
+		this.limiter = new RateLimiter(1000, 8000);
 	}
 
 	// Convert the raw API data to a post object
@@ -61,7 +63,7 @@ class RSJustice extends WordPressCache
 				page: 1,
 				posts_per_page: 500
 			},
-			retries: 99
+			retries: 99,
 		};
 
 		// Keep loading the next page as long as we get 500 posts on the current page
@@ -73,18 +75,18 @@ class RSJustice extends WordPressCache
 		}
 
 		// All posts have been loaded, start a timer to update the cache every 5 minutes
-		let self = this;
-		setInterval(
-			function() {
-				// Get posts after the latest post in our cache
-				let options = {
-					qs: {
-						after: self.last_update.tz('UTC').format('YYYY-MM-DD HH:mm:ss')
-					}
-				};
+		// let self = this;
+		// setInterval(
+		// 	function() {
+		// 		// Get posts after the latest post in our cache
+		// 		let options = {
+		// 			qs: {
+		// 				after: self.last_update.tz('UTC').format('YYYY-MM-DD HH:mm:ss')
+		// 			}
+		// 		};
 
-				self.save_posts(options, true).catch(e => console.warn('RSJ update error', e));
-			}, 300000);
+		// 		self.save_posts(options, true).catch(e => console.warn('RSJ update error', e));
+		// 	}, 300000);
 	}
 }
 
