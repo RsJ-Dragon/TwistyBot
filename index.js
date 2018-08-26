@@ -39,7 +39,7 @@ async function main()
 			user_config: src_require('settings/UserSettingsFile'),
 			bot_config: src_require('settings/BotSettingsFile'),
 			global_permissions: config.get('global_permissions'),
-			error_channel: '309556812594806786' // RS JUSTICE.bot-errors
+			error_channel: '275684827062206465' // Twisty-Test.logs
 		}
 	);
 
