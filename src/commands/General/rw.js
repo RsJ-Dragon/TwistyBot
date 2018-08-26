@@ -85,7 +85,13 @@ module.exports.run = async function(Discord, client, params, options) {
 			if (response.length > 1)
 				response.unshift(leaving_soon);
 			else
-				response = { content: leaving_soon, options: response[0] };
+			{
+				// Trickier, if no exact match but has a close match, the response is text
+				if (typeof response[0] === 'string')
+					return response[0] + '\n' + leaving_soon;
+				else
+					return { content: leaving_soon, options: response[0] };
+			}
 			return response;
 		}
 		else
