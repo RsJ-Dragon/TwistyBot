@@ -36,8 +36,8 @@ const private_channels = [
 ];
 
 const leaving_soon =
-	'RSJustice and RuneWatch are merging, as a result RsJ-Bot will be shutting down permanently. ' +
-	'TwistyBot will continue to provide the !rsj/rw commands. Use the !invite command for the links to TwistyBot and RuneWatch discord.';
+	'RsJ-Bot will be shutting down on September 17th. ' +
+	'Use the !invite command for the links to TwistyBot and RuneWatch discord.';
 
 module.exports.run = async function(Discord, client, params, options) {
 

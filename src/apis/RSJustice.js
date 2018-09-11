@@ -75,18 +75,18 @@ class RSJustice extends WordPressCache
 		}
 
 		// All posts have been loaded, start a timer to update the cache every 5 minutes
-		// let self = this;
-		// setInterval(
-		// 	function() {
-		// 		// Get posts after the latest post in our cache
-		// 		let options = {
-		// 			qs: {
-		// 				after: self.last_update.tz('UTC').format('YYYY-MM-DD HH:mm:ss')
-		// 			}
-		// 		};
+		let self = this;
+		setInterval(
+			function() {
+				// Get posts after the latest post in our cache
+				let options = {
+					qs: {
+						after: self.last_update.tz('UTC').format('YYYY-MM-DD HH:mm:ss')
+					}
+				};
 
-		// 		self.save_posts(options, true).catch(e => console.warn('RSJ update error', e));
-		// 	}, 300000);
+				self.save_posts(options, true).catch(e => console.warn('RSJ update error', e));
+			}, 300000);
 	}
 }
 
